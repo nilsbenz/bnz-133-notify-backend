@@ -1,6 +1,6 @@
-# JWT Express Starter
+# TBZ M133 | Notify Backend
 
-This project is a boilerplate for jwt implementations with node.js. It uses a mongodb which can be configured in src/server.js.
+This is a project we realized for module 133. It contains a backend server for an application called notify.
 
 ## `npm i`
 
