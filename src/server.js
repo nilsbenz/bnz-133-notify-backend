@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const authService = require('./services/authService');
+const fileService = require('./services/fileService');
+const fileUpload = require('express-fileupload');
 let tokenMiddleware = require('./middlewares/tokenMiddleware');
 let mongoose = require('mongoose');
 
@@ -17,9 +19,13 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
+app.use(fileUpload({
+  limits: {fileSize: 50 * 1024 * 1024}
+}));
 
-app.post('/login', authService.login);
-app.post('/register', authService.register);
-app.get('/', tokenMiddleware.checkToken, (req, res) => res.send('hello world'));
+app.post('/api/auth/login', authService.login);
+app.post('/api/auth/register', authService.register);
+app.post('/api/files', fileService.save);
+app.get('/', tokenMiddleware.checkToken, (req, res) => res.send('notes'));
 
 app.listen(port, () => console.log(`Server is listening on port: ${port}`));
