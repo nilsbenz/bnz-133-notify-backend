@@ -1,11 +1,14 @@
 const File = require('../schemas/file');
+const authService = require('./authService');
 
 const fileService = (() => {
-  function save (req, res) {
+  async function save (req, res) {
     const file = new File();
     file.name = req.files.file.name;
     file.type = req.files.file.mimetype;
     file.data = req.files.file.data;
+    const user = await authService.getCurrentUser(req);
+    file.user = user._id;
     file.save((err, file) => {
       if (err) {
         res.statusCode = 500;
@@ -18,8 +21,9 @@ const fileService = (() => {
     });
   }
 
-  function findAll (req, res) {
-    File.find({}, '_id name type', (err, files) => {
+  async function findAll (req, res) {
+    const user = await authService.getCurrentUser(req);
+    File.find({user: user._id}, '_id name type', (err, files) => {
       if (err) {
         res.statusCode = 500;
         return res.json({success: false, error: err});
@@ -31,11 +35,16 @@ const fileService = (() => {
     });
   }
 
-  function findById (req, res) {
-    File.findOne({_id: req.params.id}, (err, file) => {
+  async function findById (req, res) {
+    const user = await authService.getCurrentUser(req);
+    File.findOne({_id: req.params.id, user: user._id}, (err, file) => {
       if (err) {
         res.statusCode = 500;
         return res.json({success: false, error: err});
+      }
+      if (!file) {
+        res.statusCode = 403;
+        return res.json({success: false, message: 'file not found'});
       }
       res.writeHead(200, {
         'Content-Disposition': 'attachment;filename=' + file.name,

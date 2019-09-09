@@ -65,9 +65,23 @@ const authService = (() => {
     });
   }
 
+  async function getCurrentUser (req) {
+    let token = req.headers['x-access-token'] || req.headers['authorization'];
+    if (token && token.startsWith('Bearer ')) {
+      token = token.slice(7, token.length);
+    }
+    return User.findOne({username: jwt.decode(token, config.secret).username}, (err, user) => {
+      if (err) {
+        return {success: false, error: err};
+      }
+      return {success: true, user};
+    });
+  }
+
   return {
     login,
-    register
+    register,
+    getCurrentUser
   };
 })();
 
