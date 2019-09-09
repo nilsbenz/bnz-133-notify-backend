@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const authService = require('./services/authService');
 const fileService = require('./services/fileService');
+const noteService = require('./services/noteService');
 const fileUpload = require('express-fileupload');
 let tokenMiddleware = require('./middlewares/tokenMiddleware');
 let mongoose = require('mongoose');
@@ -28,6 +29,7 @@ app.post('/api/auth/register', authService.register);
 app.post('/api/files', tokenMiddleware.checkToken, fileService.save);
 app.get('/api/files', tokenMiddleware.checkToken, fileService.findAll);
 app.get('/api/files/:id', tokenMiddleware.checkToken, fileService.findById);
+app.post('/api/notes', tokenMiddleware.checkToken, noteService.save);
 app.get('/', tokenMiddleware.checkToken, (req, res) => res.send('notes'));
 
 app.listen(port, () => console.log(`Server is listening on port: ${port}`));
