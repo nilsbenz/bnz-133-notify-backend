@@ -30,6 +30,7 @@ app.post('/api/files', tokenMiddleware.checkToken, fileService.save);
 app.get('/api/files', tokenMiddleware.checkToken, fileService.findAll);
 app.get('/api/files/:id', tokenMiddleware.checkToken, fileService.findById);
 app.post('/api/notes', tokenMiddleware.checkToken, noteService.save);
-app.get('/', tokenMiddleware.checkToken, (req, res) => res.send('notes'));
+app.get('/api/notes', tokenMiddleware.checkToken, noteService.findAll);
+app.get('/api/notes/:id', tokenMiddleware.checkToken, noteService.findById);
 
 app.listen(port, () => console.log(`Server is listening on port: ${port}`));
