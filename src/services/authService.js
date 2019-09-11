@@ -48,21 +48,36 @@ const authService = (() => {
   function register (req, res) {
     let user = new User();
     const {username, password} = req.body;
-    user.username = username;
-    bcrypt.hash(password, 10, (err, hash) => {
-      if (err) {
-        res.statusCode = 500;
-        return res.json({success: false, error: err});
-      }
-      user.password = hash;
-      user.save(err => {
+    if (username && password) {
+      User.find({username}, (err, users) => {
         if (err) {
           res.statusCode = 500;
           return res.json({success: false, error: err});
         }
-        return res.json({success: true});
+        if (users.length !== 0) {
+          res.statusCode = 400;
+          return res.json({
+            success: false,
+            message: 'Username already taken'
+          });
+        }
+        user.username = username;
+        bcrypt.hash(password, 10, (err, hash) => {
+          if (err) {
+            res.statusCode = 500;
+            return res.json({success: false, error: err});
+          }
+          user.password = hash;
+          user.save(err => {
+            if (err) {
+              res.statusCode = 500;
+              return res.json({success: false, error: err});
+            }
+            return res.json({success: true});
+          });
+        });
       });
-    });
+    }
   }
 
   async function getCurrentUser (req) {
