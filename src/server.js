@@ -26,6 +26,7 @@ app.use(fileUpload({
 
 app.post('/api/auth/login', authService.login);
 app.post('/api/auth/register', authService.register);
+app.get('/api/myself', tokenMiddleware.checkToken, authService.myself);
 app.post('/api/files', tokenMiddleware.checkToken, fileService.save);
 app.get('/api/files', tokenMiddleware.checkToken, fileService.findAll);
 app.get('/api/files/:id', tokenMiddleware.checkToken, fileService.findById);

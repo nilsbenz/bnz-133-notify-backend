@@ -80,6 +80,17 @@ const authService = (() => {
     }
   }
 
+  async function myself (req, res) {
+    const user = await getCurrentUser(req);
+    if (user) {
+      return res.json({
+        success: true,
+        username: user.username
+      });
+    }
+    return res.json({success: false});
+  }
+
   async function getCurrentUser (req) {
     let token = req.headers['x-access-token'] || req.headers['authorization'];
     if (token && token.startsWith('Bearer ')) {
@@ -96,6 +107,7 @@ const authService = (() => {
   return {
     login,
     register,
+    myself,
     getCurrentUser
   };
 })();
