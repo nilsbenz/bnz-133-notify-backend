@@ -54,10 +54,24 @@ const fileService = (() => {
     });
   }
 
+  async function remove (req, res) {
+    const user = await authService.getCurrentUser(req);
+    File.deleteOne({_id: req.params.id, user: user._id}, err => {
+      if (err) {
+        res.statusCode = 500;
+        return res.json({success: false, error: err});
+      }
+      return res.json({
+        success: true
+      });
+    });
+  }
+
   return {
     save,
     findAll,
-    findById
+    findById,
+    remove
   };
 })();
 
